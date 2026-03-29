@@ -1,65 +1,205 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { motion } from 'framer-motion'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+
+function TypewriterText() {
+  const texts = [
+    "Elevate Your Real Estate Investments",
+    "Analyze Deals Instantly",
+    "Make Smarter Investment Decisions"
+  ];
+
+  const [index, setIndex] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentText = texts[index];
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplayed(currentText.slice(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+
+        if (charIndex + 1 === currentText.length) {
+          setTimeout(() => setIsDeleting(true), 1000);
+        }
+      } else {
+        setDisplayed(currentText.slice(0, charIndex - 1));
+        setCharIndex(charIndex - 1);
+
+        if (charIndex - 1 === 0) {
+          setIsDeleting(false);
+          setIndex((prev) => (prev + 1) % texts.length);
+        }
+      }
+    }, isDeleting ? 30 : 50);
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, isDeleting, index]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <h1 className="text-5xl md:text-6xl font-bold leading-tight text-center">
+      {displayed}
+      <span className="animate-pulse">|</span>
+    </h1>
   );
 }
+
+export default function HomePage() {
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  return (
+    <main className="bg-black text-white">
+
+      {/* NAVBAR */}
+      <nav className="flex justify-between items-center px-6 py-6 max-w-6xl mx-auto">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold">RAUPE</span>
+        </div>
+
+        <div className="space-x-6 text-sm opacity-80 cursor-pointer">
+          <span onClick={() => scrollTo('features')}>Features</span>
+          <span onClick={() => scrollTo('about')}>About</span>
+          <span onClick={() => scrollTo('contact')}>Contact</span>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section className="relative h-[80vh] flex items-center justify-center text-center">
+
+        <Image
+          src="https://images.unsplash.com/photo-1494526585095-c41746248156"
+          alt="city"
+          fill
+          className="object-cover opacity-50"
+        />
+
+        <div className="relative z-10 space-y-6 max-w-3xl px-4">
+
+          <TypewriterText />
+
+          <p className="opacity-80">
+            Enterprise-grade apartment underwriting platform built for serious investors.
+          </p>
+
+          <div className="flex justify-center gap-4">
+            <button onClick={() => scrollTo('contact')} className="px-6 py-3 bg-white text-black rounded-xl">
+              Get Started
+            </button>
+            <button onClick={() => scrollTo('about')} className="px-6 py-3 border border-white/40 rounded-xl">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section id="features" className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-3 gap-6">
+
+        {features.map((f, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.2 }}
+            className="bg-white/5 p-5 rounded-2xl border border-white/10"
+          >
+            <Image src={f.img} alt="" width={400} height={250} className="rounded-xl mb-4"/>
+            <h3 className="text-lg font-semibold">{f.title}</h3>
+            <p className="text-sm opacity-70">{f.desc}</p>
+          </motion.div>
+        ))}
+
+      </section>
+
+      {/* ABOUT */}
+      <section id="about" className="max-w-4xl mx-auto px-6 py-20 text-center space-y-6">
+        <h2 className="text-3xl font-semibold">About Us</h2>
+        <p className="opacity-80">
+          RAUPE simplifies real estate deal analysis with powerful underwriting tools, financial modeling, and risk insights.
+        </p>
+        <p className="opacity-60">
+          Built for investors and enterprises who want fast, accurate, and data-driven decisions.
+        </p>
+      </section>
+
+      {/* STATS */}
+      <section className="text-center py-20 bg-white/5">
+        <h2 className="text-2xl font-semibold mb-10">
+          Trusted by Industry Leaders
+        </h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {stats.map((s, i) => (
+            <div key={i}>
+              <h3 className="text-3xl font-bold">{s.value}</h3>
+              <p className="opacity-70 text-sm">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact" className="text-center py-20">
+
+        <h2 className="text-2xl font-semibold mb-6">Contact Us</h2>
+
+        <p className="opacity-80">Reach out for demos or partnerships.</p>
+
+        <div className="mt-6 space-y-2">
+          <p>📞 8454874911</p>
+          <p>📧 kumar641837@gmail.com</p>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-6">
+          <a href="tel:8454874911" className="px-6 py-3 bg-white text-black rounded-xl">
+            Call Now
+          </a>
+
+          <a href="mailto:kumar641837@gmail.com" className="px-6 py-3 border border-white/40 rounded-xl">
+            Send Email
+          </a>
+        </div>
+
+      </section>
+
+      {/* FOOTER */}
+      <footer className="text-center text-sm opacity-60 py-6 border-t border-white/10">
+        © 2026 RAUPE. All rights reserved.
+      </footer>
+
+    </main>
+  )
+}
+
+const features = [
+  {
+    title: 'Advanced Analytics',
+    desc: 'NOI, cap rate, ROI insights instantly.',
+    img: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa'
+  },
+  {
+    title: 'Risk Assessment',
+    desc: 'Smart AI-driven deal evaluation.',
+    img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f'
+  },
+  {
+    title: 'Instant Reports',
+    desc: 'Investor-ready reports in seconds.',
+    img: 'https://images.unsplash.com/photo-1556157382-97eda2d62296'
+  }
+]
+
+const stats = [
+  { value: '500+', label: 'Deals' },
+  { value: '$2B+', label: 'Transactions' },
+  { value: '10K+', label: 'Units' },
+  { value: '99%', label: 'Accuracy' }
+]
